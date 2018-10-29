@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import time
 # numpy矩阵正常相乘为用dot，点乘用*
 X = np.array([
     [
@@ -23,21 +24,23 @@ X = np.array([
         0
     ],
 ])
-Test = np.array([[0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0],
-                 [1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1,
-                     1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
-                 [1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1,
-                     1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0],
-                 [0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1,
-                     1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0],
-                 [0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1,
-                     1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0]
-
-                 ])
+Test = np.array([[
+    0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0
+], [1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1,
+    1], [
+        1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1,
+        0
+    ], [
+        0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1,
+        0
+    ], [
+        0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1,
+        0
+    ]])
 D = np.array([[1, 0, 0, 0, 0], [0, 1, 0, 0, 0], [0, 0, 1, 0, 0],
               [0, 0, 0, 1, 0], [0, 0, 0, 0, 1]])
-W1 = 2*np.random.rand(25, 50)-1
-W2 = 2*np.random.rand(50, 5)-1
+W1 = 2 * np.random.rand(25, 50) - 1
+W2 = 2 * np.random.rand(50, 5) - 1
 
 
 def Sigmoid(x):
@@ -62,7 +65,7 @@ def Softmax(x):
     for element in x.flat:
         sum_ex += math.exp(element)
     for element in x.flat:
-        y.append(math.exp(element)/sum_ex)
+        y.append(math.exp(element) / sum_ex)
     y = np.array(y)
     return y
 
@@ -81,13 +84,14 @@ def Multi_Class(X, D):
         e2 = d - y2
         delta2 = e2
         e1 = np.dot(delta2, W2.T)  # e1 1x50的矩阵
-        delta1 = y1*(1-y1)*e1  # delta1 1x50矩阵
+        delta1 = y1 * (1 - y1) * e1  # delta1 1x50矩阵
         dW1 = alpha * np.dot(x.T, delta1.reshape(1, 50))
         W1 = W1 + dW1
         dW2 = alpha * np.dot(y1.reshape(50, 1), delta2.reshape(1, 5))
         W2 = W2 + dW2
 
 
+start_time = time.time()
 for k in range(0, 10000):
     Multi_Class(X, D)
 print("results of train data input:\n")
@@ -106,3 +110,5 @@ for i in range(0, 5):
     v2 = np.dot(y1, W2)
     y2 = Softmax(v2)
     print(y2)
+end_time = time.time()
+print(end_time - start_time, "s")

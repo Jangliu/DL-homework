@@ -1,5 +1,6 @@
 import math
 from numpy import *
+import time
 
 W = mat([[0], [0], [0]])
 X = mat([[0, 0, 1], [0, 1, 1], [1, 0, 1], [1, 1, 1]])
@@ -27,9 +28,12 @@ def DeltaBatch(X, D):
     W = W + dw / 4
 
 
+start_time = time.time()
 for i in range(0, 4000):
     DeltaBatch(X, D)
 for i in range(0, 4):
     v = dot(X[i], W)
     y = Sigmod(v)
-    print("y = ", y, "\n")
+    print(y)
+end_time = time.time()
+print(end_time - start_time, "s")

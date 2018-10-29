@@ -29,16 +29,17 @@ def BackpropXOR(X, D):
         y1 = Sigmoid(v1)  # y1 1x4的矩阵
         v2 = np.dot(y1, W2)
         y2 = Sigmoid(v2)
-        e2 = d-y2
-        delta2 = y2*(1-y2)*e2
+        e2 = d - y2
+        delta2 = y2 * (1 - y2) * e2
         e1 = np.dot(W2, delta2)  # e1 4x1的矩阵
-        delta1 = y1*(1-y1)*e1  # delta1 4x1矩阵
-        dW1 = alpha*np.reshape(x, (3, 1))*np.reshape(delta1, (1, 4))
-        W1 = W1+dW1
-        dW2 = np.reshape(alpha*delta2*y1, (4, 1))
-        W2 = W2+dW2
+        delta1 = y1 * (1 - y1) * e1  # delta1 4x1矩阵
+        dW1 = alpha * np.reshape(x, (3, 1)) * np.reshape(delta1, (1, 4))
+        W1 = W1 + dW1
+        dW2 = np.reshape(alpha * delta2 * y1, (4, 1))
+        W2 = W2 + dW2
 
 
+start_time = time.time()
 for k in range(0, 10000):
     BackpropXOR(X, D)
 for i in range(0, 4):
@@ -49,3 +50,5 @@ for i in range(0, 4):
     v2 = np.dot(y1, W2)
     y2 = Sigmoid(v2)
     print(y2)
+end_time = time.time()
+print(end_time - start_time, "s")

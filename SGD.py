@@ -1,5 +1,6 @@
 import math
-from numpy import*
+from numpy import *
+import time
 
 W = mat([[0], [0], [0]])
 X = mat([[0, 0, 1], [0, 1, 1], [1, 0, 1], [1, 1, 1]])
@@ -25,9 +26,12 @@ def DeltaSGD(X, D):
         W = W + dw.T
 
 
+start_time = time.time()
 for i in range(0, 1000):
     DeltaSGD(X, D)
 for i in range(0, 4):
     v = dot(X[i], W)
     y = Sigmod(v)
     print("y = ", y, "\n")
+end_time = time.time()
+print(end_time - start_time, "s")
