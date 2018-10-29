@@ -36,8 +36,8 @@ Test = np.array([[0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0,
                  ])
 D = np.array([[1, 0, 0, 0, 0], [0, 1, 0, 0, 0], [0, 0, 1, 0, 0],
               [0, 0, 0, 1, 0], [0, 0, 0, 0, 1]])
-W1 = np.random.rand(25, 50)
-W2 = np.random.rand(50, 5)
+W1 = 2*np.random.rand(25, 50)-1
+W2 = 2*np.random.rand(50, 5)-1
 
 
 def Sigmoid(x):
