@@ -90,7 +90,7 @@ def Multi_Class(X, D):
 
 for k in range(0, 10000):
     Multi_Class(X, D)
-print("Trained results:\n")
+print("results of train data input:\n")
 for i in range(0, 5):
     x = X[i]
     v1 = np.dot(x, W1)
@@ -98,7 +98,7 @@ for i in range(0, 5):
     v2 = np.dot(y1, W2)
     y2 = Softmax(v2)
     print(y2)
-print("Test:\n")
+print("results of test data input:\n")
 for i in range(0, 5):
     x = Test[i]
     v1 = np.dot(x, W1)
