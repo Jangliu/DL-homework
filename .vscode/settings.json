@@ -5,4 +5,5 @@
     "python.linting.pylintArgs": [
         "--disable-msg=C0103"
     ],
+    "python.pythonPath": "C:\\Users\\JangLiu\\Anaconda3\\envs\\tensorflow\\python.exe",
 }
