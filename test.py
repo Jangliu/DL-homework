@@ -6,17 +6,20 @@ import math
 import time
 from cProfile import Profile
 
-path = "D:\\work\\MINST\\"
+path = "C:\\Users\\Jangliu\\work\\MINST\\"
 W1 = np.random.randn(20, 9, 9)
-W3 = (2*np.random.rand(100, 2000)-1)/20
-W4 = (2*np.random.rand(10, 100)-1)/10
+W3 = (2 * np.random.rand(100, 2000) - 1) / 200
+W4 = (2 * np.random.rand(10, 100) - 1) / 100
 
 
 def ReLU(x):
     temp = []
     Size = x.shape
     for element in x.flat:
-        temp.append(max(0, element))
+        if element > 0:
+            temp.append(element)
+        else:
+            temp.append(0)
     y = np.array(temp)
     y = y.reshape(Size)
     return y
@@ -25,10 +28,11 @@ def ReLU(x):
 def Softmax(x):
     sum_ex = 0
     y = []
+    Max = max(max(x))
     for element in x.flat:
-        sum_ex += math.exp(element)
+        sum_ex += math.exp(element-Max)
     for element in x.flat:
-        y.append(math.exp(element)/sum_ex)
+        y.append(math.exp(element-Max) / sum_ex)
     y = np.array(y)
     return y
 
@@ -42,8 +46,7 @@ def load_mnist(path, kind):
         labels = np.fromfile(lbpath, dtype=np.uint8)
     with open(images_path, 'rb') as imgpath:
         magic, num, rows, cols = struct.unpack('>IIII', imgpath.read(16))
-        images = np.fromfile(
-            imgpath, dtype=np.uint8).reshape(len(labels), 784)
+        images = np.fromfile(imgpath, dtype=np.uint8).reshape(len(labels), 784)
     return images, labels
 
 
@@ -60,9 +63,9 @@ def main():
     X = []
     for i in range(len(images)):
         Sum = sum(images[i])
-        temp = images[i]/Sum
+        temp = images[i] / Sum
         X.append(temp.reshape(28, 28))
-    for i in range(0, 10000):
+    for i in range(0, 60000):
         alpha = 0.05
         d = D[i].reshape(10, 1)
         x = X[i]
@@ -77,9 +80,9 @@ def main():
             temp = []
             for j in range(0, 20, 2):
                 for k in range(0, 20, 2):
-                    k = y1[j:j+2, k:k+2]
+                    k = y1[j:j + 2, k:k + 2]
                     Sum = sum(sum(k))
-                    temp.append(Sum/4)
+                    temp.append(Sum / 4)
             temp = np.array(temp)
             Y2.append(temp.reshape(10, 10))
         y2 = Y2[0].reshape(100, 1)
@@ -91,14 +94,14 @@ def main():
         v4 = np.dot(W4, y3)
         y4 = Softmax(v4)
         y4 = y4.reshape(10, 1)
-        e4 = d-y4  # 10x1
+        e4 = d - y4  # 10x1
         delta4 = e4  # 10x1
         e3 = np.dot(W4.T, delta4)  # 100x1
-        delta3 = y3*(1-y3)*e3
-        dW3 = alpha*np.dot(delta3, y2.reshape(1, 2000))
-        W3 = W3+dW3
-        dW4 = alpha*np.dot(delta4, y3.reshape(1, 100))
-        W4 = W4+dW4
+        delta3 = y3 * (1 - y3) * e3
+        dW3 = alpha * np.dot(delta3, y2.reshape(1, 2000))
+        W3 = W3 + dW3
+        dW4 = alpha * np.dot(delta4, y3.reshape(1, 100))
+        W4 = W4 + dW4
 
 
 if __name__ == '__main__':
