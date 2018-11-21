@@ -1,28 +1,15 @@
 import os
 import struct
 import numpy as np
-from scipy import signal
 import math
 import time
+from scipy import signal
 from cProfile import Profile
 
 path = "C:\\Users\\Jangliu\\work\\MINST\\"
 W1 = np.random.randn(20, 9, 9)
-W3 = (2 * np.random.rand(100, 2000) - 1) / 200
-W4 = (2 * np.random.rand(10, 100) - 1) / 100
-
-
-def ReLU(x):
-    temp = []
-    Size = x.shape
-    for element in x.flat:
-        if element > 0:
-            temp.append(element)
-        else:
-            temp.append(0)
-    y = np.array(temp)
-    y = y.reshape(Size)
-    return y
+W3 = (2 * np.random.rand(100, 2000) - 1) / 20
+W4 = (2 * np.random.rand(10, 100) - 1) / 10
 
 
 def Softmax(x):
@@ -30,9 +17,9 @@ def Softmax(x):
     y = []
     Max = max(max(x))
     for element in x.flat:
-        sum_ex += math.exp(element-Max)
+        sum_ex += math.exp(element - Max)
     for element in x.flat:
-        y.append(math.exp(element-Max) / sum_ex)
+        y.append(math.exp(element - Max) / sum_ex)
     y = np.array(y)
     return y
 
@@ -50,6 +37,26 @@ def load_mnist(path, kind):
     return images, labels
 
 
+def Dropout(x, ratio):
+    temp = []
+    n = x.shape
+    if len(n) == 2:
+        x = x.reshape(1, n[1])
+    else:
+        x = x.reshape(1, n[0])
+    m, n = x.shape
+    xm = np.zeros((m, n))
+    num = round(m * n * (1 - ratio))
+    randlist = np.random.rand(m, n).tolist()
+    sortedlist = sorted(randlist[0])
+    for i in range(0, num):
+        temp.append(sortedlist.index(randlist[0][i]))
+    for k in temp:
+        xm[0][k] = m * n / num
+    y = xm
+    return y
+
+
 def main():
     global W3
     global W4
@@ -65,7 +72,7 @@ def main():
         Sum = sum(images[i])
         temp = images[i] / Sum
         X.append(temp.reshape(28, 28))
-    for i in range(0, 60000):
+    for i in range(0, len(images)):
         alpha = 0.05
         d = D[i].reshape(10, 1)
         x = X[i]
@@ -74,7 +81,8 @@ def main():
             V1.append(signal.convolve2d(w1, np.rot90(x, 2), mode='valid'))
         Y1 = []
         for v1 in V1:
-            Y1.append(ReLU(v1))
+            v1[v1 < 0] = 0
+            Y1.append(v1)
         Y2 = []
         for y1 in Y1:
             temp = []
@@ -90,14 +98,15 @@ def main():
             y2 = np.vstack((y2, Y2[j].reshape(100, 1)))
         # y2 2000x1
         v3 = np.dot(W3, y2)  # 100x1
-        y3 = ReLU(v3)  # 100x1
+        v3[v3 < 0] = 0  # 100x1
+        y3 = v3
         v4 = np.dot(W4, y3)
         y4 = Softmax(v4)
         y4 = y4.reshape(10, 1)
         e4 = d - y4  # 10x1
         delta4 = e4  # 10x1
         e3 = np.dot(W4.T, delta4)  # 100x1
-        delta3 = y3 * (1 - y3) * e3
+        delta3 = v3 * e3
         dW3 = alpha * np.dot(delta3, y2.reshape(1, 2000))
         W3 = W3 + dW3
         dW4 = alpha * np.dot(delta4, y3.reshape(1, 100))
