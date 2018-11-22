@@ -36,7 +36,7 @@ def load_mnist(path, kind):
     return images, labels
 
 
-def main():
+def train():
     global W3
     global W4
     images, labels = load_mnist(path, "train")
@@ -97,6 +97,12 @@ if __name__ == "__main__":
     start_time = time.time()
     count = 0
     train()
+    #np.save("W1.npy", W1)
+    #np.save("W3.npy", W3)
+    #np.save("W4.npy", W4)
+    #W1 = np.load("W1.npy")
+    #W3 = np.load("W3.npy")
+    #W4 = np.load("W4.npy")
     images, labels = load_mnist(path, "t10k")
     D = []
     for label in labels:
@@ -111,6 +117,7 @@ if __name__ == "__main__":
         X.append(temp.reshape(28, 28))
     for i in range(len(X)):
         d = D[i].reshape(10, 1)
+        d = list(d)
         x = X[i]
         V1 = []
         for w1 in W1:
@@ -139,7 +146,8 @@ if __name__ == "__main__":
         v4 = np.dot(W4, y3)
         y4 = Softmax(v4)
         y4 = y4.reshape(10, 1)
-        if max(y4) >= 0.9 and y4.index(max(y4)) == d.index(max(d)):
+        y4 = list(y4)
+        if y4.index(max(y4)) == d.index(max(d)):
             count = count + 1
         print((i + 1) / len(images) * 100, "%", "test finfished")
     end_time = time.time()

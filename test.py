@@ -114,6 +114,8 @@ def main():
 
 
 if __name__ == '__main__':
-    prof = Profile()
+    """prof = Profile()
     prof.runcall(main)
-    prof.print_stats()
+    prof.print_stats()"""
+    B = np.load("W1.npy")
+    print(B)
