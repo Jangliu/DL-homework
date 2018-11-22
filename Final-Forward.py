@@ -5,10 +5,10 @@ from scipy import signal
 import math
 import time
 
-path = "C:\\Users\\Jangliu\\work\\MINST\\"
-W1 = np.random.randn(20, 9, 9)
-W3 = (2 * np.random.rand(100, 2000) - 1) / 20
-W4 = (2 * np.random.rand(10, 100) - 1) / 10
+path = "D:\\work\\MINST\\"
+W1 = np.random.randn(20, 6, 6)
+W3 = (2 * np.random.rand(100, 2000) - 1)
+W4 = (2 * np.random.rand(10, 100) - 1)
 
 
 def Softmax(x):
