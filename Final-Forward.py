@@ -6,9 +6,9 @@ import math
 import time
 
 path = "D:\\work\\MINST\\"
-W1 = np.random.randn(20, 6, 6)
-W3 = (2 * np.random.rand(100, 2000) - 1)
-W4 = (2 * np.random.rand(10, 100) - 1)
+W1 = np.random.randn(20, 9, 9)
+W3 = (2 * np.random.rand(100, 2000) - 1)/20
+W4 = (2 * np.random.rand(10, 100) - 1)/10
 
 
 def Softmax(x):
@@ -37,10 +37,12 @@ def load_mnist(path, kind):
 
 
 def train():
+    global W1
     global W3
     global W4
     images, labels = load_mnist(path, "train")
     D = []
+    count = 0
     for label in labels:
         temp = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         temp[label] = 1
@@ -51,7 +53,7 @@ def train():
         Sum = sum(images[i])
         temp = images[i] / Sum
         X.append(temp.reshape(28, 28))
-    for i in range(0, len(images)):
+    for i in range(len(X)):
         alpha = 0.05
         d = D[i].reshape(10, 1)
         x = X[i]
@@ -86,10 +88,36 @@ def train():
         delta4 = e4  # 10x1
         e3 = np.dot(W4.T, delta4)  # 100x1
         delta3 = v3 * e3
+        e2 = np.dot(W3.T, delta3)
+        Avrarray = np.array([[1/4, 1/4], [1/4, 1/4]])
+        temp = e2[0][0]
+        temp = temp*Avrarray
+        for k in range(1, len(e2)):
+            temp = np.vstack((temp, e2[k][0]*Avrarray))
+        E2 = temp
+        E1 = []
+        for k in range(0, 2000, 400):
+            temp = e2[k:k+20, :]
+            for j in range(k+20, k+400, 20):
+                temp = np.hstack((temp, e2[j:j+20, :]))
+            E1.append(temp)
+        delta1 = []
+        for k in range(0, 20):
+            v1 = V1[k]
+            v1[v1 < 0] = 0
+            e1 = E1[k]
+            delta1.append(v1*e1)
+        dW1 = np.zeros((20, 9, 9))
+        for k in range(0, 20):
+            dW1[k] = alpha * \
+                signal.convolve2d(X, np.rot90(delta1[k], 2), mode='valid')
+        for k in range(0, 20):
+            W1[k] = W1[k] + dW1[k]
         dW3 = alpha * np.dot(delta3, y2.reshape(1, 2000))
         W3 = W3 + dW3
         dW4 = alpha * np.dot(delta4, y3.reshape(1, 100))
         W4 = W4 + dW4
+
         print((i + 1) / len(X) * 100, "%", "train finished")
 
 
