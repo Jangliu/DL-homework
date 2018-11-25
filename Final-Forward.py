@@ -96,10 +96,10 @@ def train():
             temp = np.vstack((temp, e2[k][0]*Avrarray))
         E2 = temp
         E1 = []
-        for k in range(0, 2000, 400):
-            temp = e2[k:k+20, :]
-            for j in range(k+20, k+400, 20):
-                temp = np.hstack((temp, e2[j:j+20, :]))
+        for k in range(0, 4000, 200):
+            temp = E2[k:k+20, :]
+            for j in range(k+20, k+200, 20):
+                temp = np.hstack((temp, E2[j:j+20, :]))
             E1.append(temp)
         delta1 = []
         for k in range(0, 20):
@@ -110,14 +110,13 @@ def train():
         dW1 = np.zeros((20, 9, 9))
         for k in range(0, 20):
             dW1[k] = alpha * \
-                signal.convolve2d(X, np.rot90(delta1[k], 2), mode='valid')
+                signal.convolve2d(x, np.rot90(delta1[k], 2), mode='valid')
         for k in range(0, 20):
             W1[k] = W1[k] + dW1[k]
         dW3 = alpha * np.dot(delta3, y2.reshape(1, 2000))
         W3 = W3 + dW3
         dW4 = alpha * np.dot(delta4, y3.reshape(1, 100))
         W4 = W4 + dW4
-
         print((i + 1) / len(X) * 100, "%", "train finished")
 
 
